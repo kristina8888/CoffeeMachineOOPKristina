@@ -249,7 +249,7 @@ public class MachineBlue {
                     break;
 
                 case "remaining":
-                    remaining();
+                    MachineBlue.remaining();
                     break;
 
                 default:

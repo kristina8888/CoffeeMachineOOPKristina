@@ -13,11 +13,11 @@ public class MachineBlue {
     public String color;
     public String shape;
     public int dimension;
-    public static int water;
-    public static int milk;
-    public static int beans;
-    public static int cups;
-    public static int money;
+    public int water;
+    public int milk;
+    public int beans;
+    public int cups;
+    public int money;
     FileReader fileReader;
 
     public FileReader getFileReader() {
@@ -126,7 +126,7 @@ public class MachineBlue {
     }
 
 
-    public static void remaining() throws IOException {
+    public void remaining() throws IOException {
         FileWriter writer1 = new FileWriter("doc/coffee_status.csv");
         writer1.write(water+"\n");
         writer1.write(milk + "\n");
@@ -149,23 +149,23 @@ public class MachineBlue {
         loadStatusFromFile();
     }
 
-    public static void fill() {
+    public void fill() {
         System.out.println("Write how many ml of water you want to add:");
-        MachineBlue.water += scanner.nextInt();
+        water += scanner.nextInt();
         System.out.println("Write how many ml of milk you want to add:");
-        MachineBlue.milk += scanner.nextInt();
+        milk += scanner.nextInt();
         System.out.println("Write how many grams of coffee beans you want to add:");
-        MachineBlue.beans += scanner.nextInt();
+        beans += scanner.nextInt();
         System.out.println("Write how many disposable cups of coffee you want to add:");
-        MachineBlue.cups += scanner.nextInt();
+        cups += scanner.nextInt();
     }
 
-    public static void take() {
+    public void take() {
         System.out.println("I gave you " + "$" + money);
-        MachineBlue.money -= money;
+        money -= money;
     }
 
-    public static void buy() {
+    public void buy() {
         System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu: ");
         String coffee = scanner.next();
         switch (coffee) {
@@ -229,7 +229,7 @@ public class MachineBlue {
         }
     }
 
-    public static void menu() throws IOException {
+    public void menu() throws IOException {
 
         while (!menu.equals("exit")) {
             System.out.println("Write action (buy, fill, take, remaining, exit):");
@@ -237,19 +237,19 @@ public class MachineBlue {
 
             switch (menu) {
                 case "buy":
-                    MachineBlue.buy();
+                    buy();
                     break;
 
                 case "fill":
-                    MachineBlue.fill();
+                    fill();
                     break;
 
                 case "take":
-                    MachineBlue.take();
+                    take();
                     break;
 
                 case "remaining":
-                    MachineBlue.remaining();
+                    remaining();
                     break;
 
                 default:

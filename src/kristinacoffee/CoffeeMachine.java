@@ -27,7 +27,7 @@ public class CoffeeMachine {
 
         }
 
-        MachineBlue.menu();
+        machine1.menu();
 
     }
 }

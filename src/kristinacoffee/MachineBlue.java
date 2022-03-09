@@ -3,39 +3,21 @@ package kristinacoffee;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 public class MachineBlue {
 
     static Scanner scanner = new Scanner(System.in);
     public static String menu = " ";
-
-    public String name;
-    public String color;
-    public String shape;
-    public int dimension;
     public int hasWater;
     public int hasMilk;
     public int hasBeans;
     public int hasCups;
     public int hasMoney;
-    FileReader fileReader;
-    public CoffeeType c;
-
-    public FileReader getFileReader() {
-        return fileReader;
-    }
-
-    public void setFileReader(FileReader fileReader) {
-        this.fileReader = fileReader;
-    }
 
     @Override
     public String toString() {
         return "MachineBlue{" +
-                "name='" + name + '\'' +
-                ", color='" + color + '\'' +
-                ", shape='" + shape + '\'' +
-                ", dimension=" + dimension +
                 ", water=" + hasWater +
                 ", milk=" + hasMilk +
                 ", beans=" + hasBeans +
@@ -44,41 +26,7 @@ public class MachineBlue {
                 '}';
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getShape() {
-        return shape;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
-
-    public int getDimension() {
-        return dimension;
-    }
-
-    public void setDimension(int dimension) {
-        this.dimension = dimension;
-    }
-
-    public int getWater() throws FileNotFoundException {
-        return hasWater;
-    }
+    public int getWater() {return hasWater; }
 
     public void setWater(int hasWater) {
         this.hasWater = hasWater;
@@ -115,13 +63,20 @@ public class MachineBlue {
     }
 
     public void loadStatusFromFile() throws FileNotFoundException {
-        File myObj = new File("doc/coffee_remaining.csv");
-        Scanner myReader = new Scanner(myObj);
-        while (myReader.hasNextLine()) {
-            String data = myReader.nextLine();
-            System.out.println((data));
+        FileReader reader = new FileReader("doc/coffee_remaining.csv");
+        Scanner fileScanner = new Scanner(reader);
+
+        fileScanner.nextLine();
+        fileScanner.useDelimiter("\t");
+
+        hasWater = fileScanner.nextInt();
+        hasMilk = fileScanner.nextInt();
+        hasBeans = fileScanner.nextInt();
+        hasCups = fileScanner.nextInt();
+        hasMoney = fileScanner.nextInt();
+
         }
-    }
+
 
     public void remaining() {
         System.out.println("The coffee machine has: \n" +
@@ -177,25 +132,44 @@ public class MachineBlue {
         hasWater -= c.getWaterNeeded();
         hasMilk -= c.getMilkNeeded();
         hasBeans -= c.getBeansNeeded();
-        hasCups -= c.getBeansNeeded();
-        hasMoney -= c.getPrice();
+        hasCups -= c.getCupsNeeded();
+        hasMoney += c.getPrice();
     }
 
     public void buy() {
+        CoffeeType c;
         System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu: ");
         String coffee = scanner.next();
 
         switch (coffee) {
             case "1":
                 c = new CoffeeType("espresso", 250, 0, 16, 1, 4);
+                if (!canMakeCoffee(c)) {
+                    System.out.println("Sorry, not enough " + ingredientLow(c) + "!");
+                } else {
+                    System.out.println("I have enough resources, making you a coffee!");
+                    makeCoffee(c);
+                }
                 break;
 
             case "2":
                 c = new CoffeeType("latte", 350, 75, 20, 1, 7);
+                if (!canMakeCoffee(c)) {
+                    System.out.println("Sorry, not enough " + ingredientLow(c) + "!");
+                } else {
+                    System.out.println("I have enough resources, making you a coffee!");
+                    makeCoffee(c);
+                }
                 break;
 
             case "3":
                 c = new CoffeeType("cappuccino", 200, 100, 12, 1, 6);
+                if (!canMakeCoffee(c)) {
+                    System.out.println("Sorry, not enough " + ingredientLow(c) + "!");
+                } else {
+                    System.out.println("I have enough resources, making you a coffee!");
+                    makeCoffee(c);
+                }
                 break;
 
             case "back":
@@ -205,13 +179,6 @@ public class MachineBlue {
                 System.out.println("Wrong input!");
                 break;
         }
-        if (!canMakeCoffee(c)) {
-            System.out.println("Sorry, not enough " + ingredientLow(c) + "!");
-        } else {
-            System.out.println("I have enough resources, making you a coffee!");
-            makeCoffee(c);
-        }
-
     }
 
     public void menu() throws IOException {

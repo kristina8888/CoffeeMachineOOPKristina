@@ -13,12 +13,13 @@ public class MachineBlue {
     public String color;
     public String shape;
     public int dimension;
-    public int water;
-    public int milk;
-    public int beans;
-    public int cups;
-    public int money;
+    public int hasWater;
+    public int hasMilk;
+    public int hasBeans;
+    public int hasCups;
+    public int hasMoney;
     FileReader fileReader;
+    public CoffeeType c;
 
     public FileReader getFileReader() {
         return fileReader;
@@ -35,11 +36,11 @@ public class MachineBlue {
                 ", color='" + color + '\'' +
                 ", shape='" + shape + '\'' +
                 ", dimension=" + dimension +
-                ", water=" + water +
-                ", milk=" + milk +
-                ", beans=" + beans +
-                ", cups=" + cups +
-                ", money=" + money +
+                ", water=" + hasWater +
+                ", milk=" + hasMilk +
+                ", beans=" + hasBeans +
+                ", cups=" + hasCups +
+                ", money=" + hasMoney +
                 '}';
     }
 
@@ -76,47 +77,44 @@ public class MachineBlue {
     }
 
     public int getWater() throws FileNotFoundException {
-        FileReader reader = new FileReader("doc/coffee_status.csv");
-        return water;
+        return hasWater;
     }
 
-    public void setWater(int water) {
-        this.water = water;
+    public void setWater(int hasWater) {
+        this.hasWater = hasWater;
     }
 
-    public int getMilk() {
-        return milk;
-    }
+    public int getMilk() {return hasMilk; }
 
-    public void setMilk(int milk) {
-        this.milk = milk;
+    public void setMilk(int hasMilk) {
+        this.hasMilk = hasMilk;
     }
 
     public int getBeans() {
-        return beans;
+        return hasBeans;
     }
 
-    public void setBeans(int beans) {
-        this.beans = beans;
+    public void setBeans(int hasBeans) {
+        this.hasBeans = hasBeans;
     }
 
     public int getCups() {
-        return cups;
+        return hasCups;
     }
 
-    public void setCups(int cups) {
-        this.cups = cups;
+    public void setCups(int hasCups) {
+        this.hasCups = hasCups;
     }
 
     public int getMoney() {
-        return money;
+        return hasMoney;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setMoney(int hasMoney) {
+        this.hasMoney = hasMoney;
     }
 
-    public static void loadStatusFromFile () throws FileNotFoundException {
+    public void loadStatusFromFile() throws FileNotFoundException {
         File myObj = new File("doc/coffee_remaining.csv");
         Scanner myReader = new Scanner(myObj);
         while (myReader.hasNextLine()) {
@@ -125,108 +123,95 @@ public class MachineBlue {
         }
     }
 
+    public void remaining() {
+        System.out.println("The coffee machine has: \n" +
+                hasWater + " ml of water\n" +
+                hasMilk + " ml of milk\n" +
+                hasBeans + " g of coffee beans\n" +
+                hasCups + " disposable cups\n" +
+                "$" + hasMoney + " of money\n");
+    }
 
-    public void remaining() throws IOException {
-        FileWriter writer1 = new FileWriter("doc/coffee_status.csv");
-        writer1.write(water+"\n");
-        writer1.write(milk + "\n");
-        writer1.write(beans + "\n");
-        writer1.write(cups + "\n");
-        writer1.write(money + "\n");
-        writer1.flush();
-        writer1.close();
-
+    public void writeCoffeeStatus() throws IOException {
         FileWriter writer = new FileWriter("doc/coffee_remaining.csv");
-        writer.write("The coffee machine has: \n");
-        writer.write(water + " ml of water\n");
-        writer.write(milk + " ml of milk\n");
-        writer.write(beans + " g of coffee beans\n");
-        writer.write(cups + " disposable cups\n");
-        writer.write("$" + money + " of money\n");
-        writer.flush();
+        writer.write("Water, Milk, Coffee beans, Disposable cups, Money +\n");
+        writer.write(hasWater + "\t" + hasMilk + "\t" + hasBeans + "\t" + hasCups + "\t" + hasMoney);
         writer.close();
-
-        loadStatusFromFile();
     }
 
     public void fill() {
         System.out.println("Write how many ml of water you want to add:");
-        water += scanner.nextInt();
+        hasWater += scanner.nextInt();
         System.out.println("Write how many ml of milk you want to add:");
-        milk += scanner.nextInt();
+        hasMilk += scanner.nextInt();
         System.out.println("Write how many grams of coffee beans you want to add:");
-        beans += scanner.nextInt();
+        hasBeans += scanner.nextInt();
         System.out.println("Write how many disposable cups of coffee you want to add:");
-        cups += scanner.nextInt();
+        hasCups += scanner.nextInt();
     }
 
     public void take() {
-        System.out.println("I gave you " + "$" + money);
-        money -= money;
+        System.out.println("I gave you " + "$" + hasMoney);
+        hasMoney -= hasMoney;
+    }
+
+    public boolean canMakeCoffee(CoffeeType c) {
+        if (hasWater >= c.getWaterNeeded() && hasMilk >= c.getMilkNeeded() && hasBeans >= c.getBeansNeeded()
+                && hasCups >= c.getCupsNeeded()) {
+            return true;
+        } else
+            return false;
+    }
+
+    public String ingredientLow(CoffeeType c) {
+        String ingredient = " ";
+        if (hasWater < c.getWaterNeeded()) ingredient = "water";
+        else if (hasMilk < c.getMilkNeeded()) ingredient = "milk";
+        else if (hasBeans < c.getBeansNeeded()) ingredient = "coffee beans";
+        else if (hasCups < c.getCupsNeeded()) ingredient = "disposable cups";
+
+        return ingredient;
+    }
+
+    public void makeCoffee(CoffeeType c) {
+        hasWater -= c.getWaterNeeded();
+        hasMilk -= c.getMilkNeeded();
+        hasBeans -= c.getBeansNeeded();
+        hasCups -= c.getBeansNeeded();
+        hasMoney -= c.getPrice();
     }
 
     public void buy() {
         System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu: ");
         String coffee = scanner.next();
+
         switch (coffee) {
             case "1":
-                if (water >= 250 && beans >= 16 && cups >= 1) {
-                    System.out.println("I have enough resources, making you a coffee!");
-                    water -= 250;
-                    milk += 0;
-                    beans -= 16;
-                    cups -= 1;
-                    money += 4;
-                } else if (water < 250) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (beans < 16) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                } else if (cups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                }
+                c = new CoffeeType("espresso", 250, 0, 16, 1, 4);
                 break;
 
             case "2":
-                if (water >= 350 && milk >= 75 && beans >= 20 && cups >= 1) {
-                    System.out.println("I have enough resources, making you a coffee!");
-                    water -= 350;
-                    milk -= 75;
-                    beans -= 20;
-                    cups -= 1;
-                    money += 7;
-                } else if (water < 350) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (milk < 75) {
-                    System.out.println("Sorry, not enough milk!");
-                } else if (beans < 20) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                } else if (cups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                }
+                c = new CoffeeType("latte", 350, 75, 20, 1, 7);
                 break;
 
             case "3":
-                if (water >= 200 && milk >= 100 && beans >= 12 && cups >= 1) {
-                    System.out.println("I have enough resources, making you a coffee!");
-                    water -= 200;
-                    milk -= 100;
-                    beans -= 12;
-                    cups -= 1;
-                    money += 6;
-                } else if (water < 200) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (milk < 100) {
-                    System.out.println("Sorry, not enough milk!");
-                } else if (beans < 12) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                } else if (cups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                }
+                c = new CoffeeType("cappuccino", 200, 100, 12, 1, 6);
                 break;
 
+            case "back":
+                return;
+
             default:
+                System.out.println("Wrong input!");
                 break;
         }
+        if (!canMakeCoffee(c)) {
+            System.out.println("Sorry, not enough " + ingredientLow(c) + "!");
+        } else {
+            System.out.println("I have enough resources, making you a coffee!");
+            makeCoffee(c);
+        }
+
     }
 
     public void menu() throws IOException {
@@ -252,7 +237,12 @@ public class MachineBlue {
                     remaining();
                     break;
 
+                case "exit":
+                    writeCoffeeStatus();
+                    break;
+
                 default:
+                    System.out.println("Wrong input!");
                     break;
             }
         }
